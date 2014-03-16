@@ -29,6 +29,12 @@ window["distri/google-analytics:master"]({
       "mode": "100644",
       "content": "mocha.globals(\"ga\")\n\ndescribe \"analytics\", ->\n  it \"should put analytics on the page\", ->\n    GA = require \"../main\"\n\n    GA.init(\"UA-XXXX-Y\")\n\n  it \"should be a chill bro\", ->\n    ga(\"send\", \"duder\")\n",
       "type": "blob"
+    },
+    "pixie.cson": {
+      "path": "pixie.cson",
+      "mode": "100644",
+      "content": "version: \"0.1.0\"\n",
+      "type": "blob"
     }
   },
   "distribution": {
@@ -46,11 +52,17 @@ window["distri/google-analytics:master"]({
       "path": "test/main",
       "content": "(function() {\n  mocha.globals(\"ga\");\n\n  describe(\"analytics\", function() {\n    it(\"should put analytics on the page\", function() {\n      var GA;\n      GA = require(\"../main\");\n      return GA.init(\"UA-XXXX-Y\");\n    });\n    return it(\"should be a chill bro\", function() {\n      return ga(\"send\", \"duder\");\n    });\n  });\n\n}).call(this);\n\n//# sourceURL=test/main.coffee",
       "type": "blob"
+    },
+    "pixie": {
+      "path": "pixie",
+      "content": "module.exports = {\"version\":\"0.1.0\"};",
+      "type": "blob"
     }
   },
   "progenitor": {
     "url": "http://strd6.github.io/editor/"
   },
+  "version": "0.1.0",
   "entryPoint": "main",
   "repository": {
     "id": 17791404,
