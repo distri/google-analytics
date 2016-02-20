@@ -14,13 +14,19 @@
     },
     "lib/analytics.js": {
       "path": "lib/analytics.js",
-      "content": "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\nm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');\n",
+      "content": "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\nm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n",
+      "mode": "100644",
+      "type": "blob"
+    },
+    "main.coffee": {
+      "path": "main.coffee",
+      "content": "module.exports =\n  init: (id) ->\n    require \"./lib/analytics\"\n\n    global.ga('create', id, 'auto')\n    global.ga('send', 'pageview')\n",
       "mode": "100644",
       "type": "blob"
     },
     "pixie.cson": {
       "path": "pixie.cson",
-      "content": "version: \"0.1.1\"\n",
+      "content": "version: \"0.1.2\"\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -29,39 +35,34 @@
       "content": "mocha.globals(\"ga\")\n\ndescribe \"analytics\", ->\n  it \"should put analytics on the page\", ->\n    GA = require \"../main\"\n\n    GA.init(\"UA-XXXX-Y\")\n\n  it \"should be a chill bro\", ->\n    ga(\"send\", \"duder\")\n",
       "mode": "100644",
       "type": "blob"
-    },
-    "main.coffee": {
-      "path": "main.coffee",
-      "content": "module.exports =\n  init: (id) ->\n    require \"./lib/analytics\"\n\n    global.ga('create', id, 'auto')\n    global.ga('send', 'pageview')\n",
-      "mode": "100644"
     }
   },
   "distribution": {
     "lib/analytics": {
       "path": "lib/analytics",
-      "content": "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\nm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');\n",
-      "type": "blob"
-    },
-    "pixie": {
-      "path": "pixie",
-      "content": "module.exports = {\"version\":\"0.1.1\"};",
-      "type": "blob"
-    },
-    "test/main": {
-      "path": "test/main",
-      "content": "(function() {\n  mocha.globals(\"ga\");\n\n  describe(\"analytics\", function() {\n    it(\"should put analytics on the page\", function() {\n      var GA;\n      GA = require(\"../main\");\n      return GA.init(\"UA-XXXX-Y\");\n    });\n    return it(\"should be a chill bro\", function() {\n      return ga(\"send\", \"duder\");\n    });\n  });\n\n}).call(this);\n",
+      "content": "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\nm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n",
       "type": "blob"
     },
     "main": {
       "path": "main",
       "content": "(function() {\n  module.exports = {\n    init: function(id) {\n      require(\"./lib/analytics\");\n      global.ga('create', id, 'auto');\n      return global.ga('send', 'pageview');\n    }\n  };\n\n}).call(this);\n",
       "type": "blob"
+    },
+    "pixie": {
+      "path": "pixie",
+      "content": "module.exports = {\"version\":\"0.1.2\"};",
+      "type": "blob"
+    },
+    "test/main": {
+      "path": "test/main",
+      "content": "(function() {\n  mocha.globals(\"ga\");\n\n  describe(\"analytics\", function() {\n    it(\"should put analytics on the page\", function() {\n      var GA;\n      GA = require(\"../main\");\n      return GA.init(\"UA-XXXX-Y\");\n    });\n    return it(\"should be a chill bro\", function() {\n      return ga(\"send\", \"duder\");\n    });\n  });\n\n}).call(this);\n",
+      "type": "blob"
     }
   },
   "progenitor": {
     "url": "https://danielx.net/editor/"
   },
-  "version": "0.1.1",
+  "version": "0.1.2",
   "entryPoint": "main",
   "repository": {
     "branch": "master",
