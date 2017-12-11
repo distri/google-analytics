@@ -1,11 +1,11 @@
 (function(pkg) {
   (function() {
-  var annotateSourceURL, cacheFor, circularGuard, defaultEntryPoint, fileSeparator, generateRequireFn, global, isPackage, loadModule, loadPackage, loadPath, normalizePath, rootModule, startsWith,
+  var annotateSourceURL, cacheFor, circularGuard, defaultEntryPoint, fileSeparator, generateRequireFn, global, isPackage, loadModule, loadPackage, loadPath, normalizePath, publicAPI, rootModule, startsWith,
     __slice = [].slice;
 
   fileSeparator = '/';
 
-  global = window;
+  global = self;
 
   defaultEntryPoint = "main";
 
@@ -70,11 +70,14 @@
   };
 
   loadModule = function(pkg, path) {
-    var args, context, dirname, file, module, program, values;
+    var args, content, context, dirname, file, module, program, values;
     if (!(file = pkg.distribution[path])) {
       throw "Could not find file at " + path + " in " + pkg.name;
     }
-    program = annotateSourceURL(file.content, pkg, path);
+    if ((content = file.content) == null) {
+      throw "Malformed package. No content for file at " + path + " in " + pkg.name;
+    }
+    program = annotateSourceURL(content, pkg, path);
     dirname = path.split(fileSeparator).slice(0, -1).join(fileSeparator);
     module = {
       path: dirname,
@@ -106,6 +109,7 @@
   };
 
   generateRequireFn = function(pkg, module) {
+    var fn;
     if (module == null) {
       module = rootModule;
     }
@@ -115,9 +119,11 @@
     if (pkg.scopedName == null) {
       pkg.scopedName = "ROOT";
     }
-    return function(path) {
+    fn = function(path) {
       var otherPackage;
-      if (isPackage(path)) {
+      if (typeof path === "object") {
+        return loadPackage(path);
+      } else if (isPackage(path)) {
         if (!(otherPackage = pkg.dependencies[path])) {
           throw "Package: " + path + " not found.";
         }
@@ -132,14 +138,26 @@
         return loadPath(module, pkg, path);
       }
     };
+    fn.packageWrapper = publicAPI.packageWrapper;
+    fn.executePackageWrapper = publicAPI.executePackageWrapper;
+    return fn;
+  };
+
+  publicAPI = {
+    generateFor: generateRequireFn,
+    packageWrapper: function(pkg, code) {
+      return ";(function(PACKAGE) {\n  var src = " + (JSON.stringify(PACKAGE.distribution.main.content)) + ";\n  var Require = new Function(\"PACKAGE\", \"return \" + src)({distribution: {main: {content: src}}});\n  var require = Require.generateFor(PACKAGE);\n  " + code + ";\n})(" + (JSON.stringify(pkg, null, 2)) + ");";
+    },
+    executePackageWrapper: function(pkg) {
+      return publicAPI.packageWrapper(pkg, "require('./" + pkg.entryPoint + "')");
+    },
+    loadPackage: loadPackage
   };
 
   if (typeof exports !== "undefined" && exports !== null) {
-    exports.generateFor = generateRequireFn;
+    module.exports = publicAPI;
   } else {
-    global.Require = {
-      generateFor: generateRequireFn
-    };
+    global.Require = publicAPI;
   }
 
   startsWith = function(string, prefix) {
@@ -160,9 +178,10 @@
     return "" + program + "\n//# sourceURL=" + pkg.scopedName + "/" + path;
   };
 
+  return publicAPI;
+
 }).call(this);
 
-//# sourceURL=main.coffee
   window.require = Require.generateFor(pkg);
 })({
   "source": {
@@ -180,7 +199,7 @@
     },
     "lib/analytics.js": {
       "path": "lib/analytics.js",
-      "content": "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\nm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n",
+      "content": "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\nm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -192,7 +211,7 @@
     },
     "pixie.cson": {
       "path": "pixie.cson",
-      "content": "version: \"0.1.2\"\n",
+      "content": "version: \"0.1.3\"\npublish:\n  s3:\n    basePath: \"public/danielx.net\"\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -206,7 +225,7 @@
   "distribution": {
     "lib/analytics": {
       "path": "lib/analytics",
-      "content": "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\nm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n",
+      "content": "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\nm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');\n",
       "type": "blob"
     },
     "main": {
@@ -216,7 +235,7 @@
     },
     "pixie": {
       "path": "pixie",
-      "content": "module.exports = {\"version\":\"0.1.2\"};",
+      "content": "module.exports = {\"version\":\"0.1.3\",\"publish\":{\"s3\":{\"basePath\":\"public/danielx.net\"}}};",
       "type": "blob"
     },
     "test/main": {
@@ -228,7 +247,15 @@
   "progenitor": {
     "url": "https://danielx.net/editor/"
   },
-  "version": "0.1.2",
+  "config": {
+    "version": "0.1.3",
+    "publish": {
+      "s3": {
+        "basePath": "public/danielx.net"
+      }
+    }
+  },
+  "version": "0.1.3",
   "entryPoint": "main",
   "repository": {
     "branch": "master",
